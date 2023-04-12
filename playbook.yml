@@ -1,0 +1,41 @@
+- name: 'Base'
+  become: true
+  hosts:
+    - 'postgresql:redis:worker:result:poll'
+  roles:
+    - 'base'
+
+- name: 'PostgreSQL'
+  become: true
+  hosts:
+    - 'postgresql'
+  roles:
+    - 'postgresql'
+
+- name: 'Redis'
+  become: true
+  hosts:
+    - 'redis'
+  roles:
+    - 'redis'
+
+- name: 'Worker'
+  become: true
+  hosts:
+    - 'worker'
+  roles:
+    - 'worker'
+
+- name: 'Result'
+  become: true
+  hosts:
+    - 'result'
+  roles:
+    - 'result'
+
+- name: 'Poll'
+  become: true
+  hosts:
+    - 'poll'
+  roles:
+    - 'poll'

@@ -1,0 +1,12 @@
+- name: 'Update dependencies'
+  apt:
+    update_cache: 'yes'
+
+- name: 'Upgrade dependencies'
+  apt:
+    upgrade: 'yes'
+
+- name: 'Install Git'
+  apt:
+    name: 'git'
+    state: 'present'

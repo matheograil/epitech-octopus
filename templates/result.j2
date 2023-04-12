@@ -1,0 +1,14 @@
+[Unit]
+Description=Result
+
+[Service]
+User=result
+WorkingDirectory=/var/www/result
+ExecStart=node server.js
+Restart=always
+Environment=PORT=8080
+Environment='POSTGRESQL_USER={{ db_username }}'
+Environment='POSTGRESQL_PASSWORD={{ db_password }}'
+Environment='POSTGRESQL_HOST={{ hostvars['postgresql'].ansible_host }}'
+Environment='POSTGRESQL_PORT={{ db_port }}'
+Environment='POSTGRESQL_DB={{ db_name }}'

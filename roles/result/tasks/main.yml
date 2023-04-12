@@ -1,0 +1,43 @@
+- name: 'Create user'
+  user:
+    name: 'result'
+    state: 'present'
+
+- name: 'Create directory'
+  file:
+    path: '/var/www/result'
+    state: 'directory'
+
+- name: 'Apply result.tar'
+  unarchive:
+    src: 'result.tar'
+    dest: '/var/www/result'
+    extra_opts: '--strip-components=1'
+
+- name: 'Install NodeJS'
+  apt:
+    name: 'nodejs'
+    state: 'present'
+
+- name: 'Install NPM'
+  apt:
+    name: 'npm'
+    state: 'present'
+
+- name: 'Build project'
+  shell: 'npm install /var/www/result'
+
+- name: 'Change permissions'
+  shell: 'chown -R result /var/www/result && find /var/www/result -type f -exec chmod 0644 {} \; && find /var/www/result -type d -exec chmod 0755 {} \;'
+
+- name: 'Install service'
+  template:
+    src: 'templates/result.j2'
+    dest: '/etc/systemd/system/result.service'
+    mode: '0644'
+    owner: 'result'
+
+- name: 'Start Result'
+  service:
+    name: 'result.service'
+    state: 'started'

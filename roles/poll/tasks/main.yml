@@ -1,0 +1,48 @@
+- name: 'Create user'
+  user:
+    name: 'poll'
+    state: 'present'
+
+- name: 'Create directory'
+  file:
+    path: '/var/www/poll'
+    state: 'directory'
+
+- name: 'Apply poll.tar'
+  unarchive:
+    src: 'poll.tar'
+    dest: '/var/www/poll'
+    extra_opts: '--strip-components=1'
+
+- name: 'Install Python'
+  apt:
+    name: 'python3'
+    state: 'present'
+
+- name: 'Install Pip'
+  apt:
+    name: 'python3-pip'
+    state: 'present'
+
+- name: 'Install Setuptools'
+  pip:
+    name: 'setuptools'
+    state: 'present'
+
+- name: 'Build project'
+  shell: 'pip3 install -r /var/www/poll/requirements.txt'
+
+- name: 'Change permissions'
+  shell: 'chown -R poll /var/www/poll && find /var/www/poll -type f -exec chmod 0644 {} \; && find /var/www/poll -type d -exec chmod 0755 {} \;'
+
+- name: 'Install service'
+  template:
+    src: 'templates/poll.j2'
+    dest: '/etc/systemd/system/poll.service'
+    mode: '0644'
+    owner: 'poll'
+
+- name: 'Start Poll'
+  service:
+    name: 'poll.service'
+    state: 'started'

@@ -1,0 +1,62 @@
+- name: 'Install PostgreSQL'
+  apt:
+    name: 'postgresql'
+    state: 'present'
+
+- name: 'Install Python'
+  apt:
+    name: 'python3'
+    state: 'present'
+
+- name: 'Install Psycopg'
+  apt:
+    name: 'python3-psycopg2'
+    state: 'present'
+
+- name: 'Apply pg_hba.conf'
+  copy:
+    src: 'pg_hba.conf'
+    dest: '/etc/postgresql/11/main/pg_hba.conf'
+    owner: 'postgres'
+    group: 'postgres'
+    mode: '0640'
+
+- name: 'Apply postgresql.conf'
+  copy:
+    src: 'postgresql.conf'
+    dest: '/etc/postgresql/11/main/postgresql.conf'
+    owner: 'postgres'
+    group: 'postgres'
+    mode: '0644'
+
+- name: 'Upload schema.sql'
+  copy:
+    src: 'schema.sql'
+    dest: '/etc/postgresql/11/main/schema.sql'
+    owner: 'postgres'
+    group: 'postgres'
+    mode: '0644'
+
+- name: 'Restart PostgreSQL'
+  systemd:
+    name: 'postgresql'
+    state: 'restarted'
+
+- name: 'Create database'
+  postgresql_db:
+    name: '{{ db_name }}'
+    state: 'present'
+
+- name: 'Apply schema.sql'
+  postgresql_query:
+    path_to_script: '/etc/postgresql/11/main/schema.sql'
+    as_single_query: true
+    db: '{{ db_name }}'
+
+- name: 'Create database user'
+  postgresql_user:
+    name: '{{ db_username }}'
+    password: '{{ db_password }}'
+    db: '{{ db_name }}'
+    priv: 'ALL'
+    state: 'present'
